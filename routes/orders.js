@@ -22,9 +22,9 @@ router.post("/", async (req, res) => {
         return res.status(400).send("Not enough stock.");
     }
 
-    // // Find seller
-    // const seller = await Seller.findById(inventoryItem.sellerId);
-    // if (!seller) return res.status(400).send("Seller not found.");
+    // Find seller
+    const seller = await Seller.findById(inventoryItem.sellerId);
+    if (!seller) return res.status(400).send("Seller not found.");
 
     // Calculate price
     const price = inventoryItem.price * qtyPurchase;
@@ -34,6 +34,7 @@ router.post("/", async (req, res) => {
         itemName,
         qtyPurchase,
         buyerId,
+        sellerId: inventoryItem.sellerId, // Use sellerId from inventory
         price,
         // Optionally, you can add sellerId, address, etc.
     });
