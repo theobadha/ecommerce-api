@@ -8,6 +8,7 @@ const inventorySchema = new mongoose.Schema({
   // image:,
   quantity: { type: Number, required: true, min: 0, max: 999 },
   category: { type: String, required: true, minlength: 5 },
+  condition: { type: String, required: true, enum: ["new", "used", "for parts"] },
   price: { type: Number, required: true, min: 0 },
   seller: {
     type: mongoose.Schema.Types.ObjectId,
