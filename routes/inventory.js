@@ -17,6 +17,7 @@ router.post("/", async (req, res) => {
     itemDescription: req.body.itemDescription,
     quantity: req.body.quantity,
     category: req.body.category,
+    condition: req.body.condition,
     price: req.body.price,
     seller: seller._id,
   });
@@ -36,6 +37,7 @@ router.put("/:id", async (req, res) => {
       itemDescription: req.body.itemDescription,
       quantity: req.body.quantity,
       category: req.body.category,
+      condition: req.body.condition,
       price: req.body.price,
       seller: { _id: seller._id, name: seller.name },
     },
