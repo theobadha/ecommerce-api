@@ -4,7 +4,12 @@ const express = require("express");
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  const inventory = await Inventory.find();
+  const { sellerId } = req.query;
+  let filter = {};
+  if (sellerId) {
+    filter.seller = sellerId;
+  }
+  const inventory = await Inventory.find(filter);
   res.send(inventory);
 });
 
