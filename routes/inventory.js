@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
   if (sellerId) {
     filter.seller = sellerId;
   }
-  const inventory = await Inventory.find(filter);
+  const inventory = await Inventory.find(filter).populate("seller", "name");
   res.send(inventory);
 });
 

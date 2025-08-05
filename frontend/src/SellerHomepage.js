@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 function SellerHomepage() {
-    const { sellerId } = useParams();
+  const { sellerId } = useParams();
   const [inventory, setInventory] = useState([]);
   const [form, setForm] = useState({
     itemName: "",
@@ -10,27 +10,27 @@ function SellerHomepage() {
     quantity: "",
     category: "",
     condition: "new",
-    price: ""
+    price: "",
   });
 
   // Fetch inventory items for this seller
   useEffect(() => {
     if (!sellerId) return;
     fetch(`/api/inventory?sellerId=${sellerId}`)
-      .then(res => res.json())
-      .then(data => setInventory(data));
+      .then((res) => res.json())
+      .then((data) => setInventory(data));
   }, [sellerId]);
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const res = await fetch("/api/inventory", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, sellerId })
+      body: JSON.stringify({ ...form, sellerId }),
     });
     if (res.ok) {
       const newItem = await res.json();
@@ -41,7 +41,7 @@ function SellerHomepage() {
         quantity: "",
         category: "",
         condition: "new",
-        price: ""
+        price: "",
       });
     }
   };
@@ -50,9 +50,10 @@ function SellerHomepage() {
     <div>
       <h2>My Inventory</h2>
       <ul>
-        {inventory.map(item => (
+        {inventory.map((item) => (
           <li key={item._id}>
-            {item.itemName} - {item.itemDescription} - Qty: {item.quantity} - {item.category} - {item.condition} - ${item.price}
+            {item.itemName} - {item.itemDescription} - Qty: {item.quantity} -{" "}
+            {item.category} - {item.condition} - ${item.price}
           </li>
         ))}
       </ul>
