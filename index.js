@@ -1,10 +1,12 @@
 const mongoose = require("mongoose");
+
 const sellers = require("./routes/sellers");
 const buyers = require("./routes/buyers");
 const inventory = require("./routes/inventory");
-const orders = require("./routes/orders")
+const orders = require("./routes/orders");
 const express = require("express");
 const app = express();
+const auth = require("./routes/auth");
 
 mongoose
   .connect("mongodb://127.0.0.1/ecommerce")
@@ -16,6 +18,7 @@ app.use("/api/sellers", sellers);
 app.use("/api/buyers", buyers);
 app.use("/api/inventory", inventory);
 app.use("/api/orders", orders);
+app.use("/api/auth", auth);
 
 const port = process.env.port || 3000;
 app.listen(port, () => console.log(`Listening on port ${port} ...`));

@@ -13,6 +13,7 @@ router.post("/", async (req, res) => {
     email: req.body.email,
     phone: req.body.phone,
     address: req.body.address,
+    password: req.body.password,
   });
   buyer = await buyer.save();
   res.send(buyer);
@@ -26,6 +27,7 @@ router.put("/:id", async (req, res) => {
       email: req.body.email,
       phone: req.body.phone,
       address: req.body.address,
+      password: req.body.password,
     },
     { new: true }
   );

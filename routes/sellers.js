@@ -14,6 +14,7 @@ router.post("/", async (req, res) => {
     email: req.body.email,
     phone: req.body.phone,
     address: req.body.address,
+    password: req.body.password,
   });
   seller = await seller.save();
 
@@ -28,6 +29,7 @@ router.put("/:id", async (req, res) => {
       email: req.body.email,
       phone: req.body.phone,
       address: req.body.address,
+      password: req.body.password,
     },
     { new: true }
   );
