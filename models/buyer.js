@@ -5,6 +5,7 @@ const buyerSchema = new mongoose.Schema({
   email: { type: String, required: true, minlength: 10, maxlength: 30 },
   phone: { type: Number, required: true, minlength: 10, maxlength: 15 },
   address: { type: String, required: true, minlength: 5, maxlength: 30 },
+  password: { type: String, required: true },
 });
 
 const Buyer = mongoose.model("Buyer", buyerSchema);
