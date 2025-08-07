@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
@@ -8,7 +9,10 @@ const { Seller } = require("../models/seller");
 // Register seller
 router.post("/seller/register", async (req, res) => {
   const { name, email, phone, address, password } = req.body;
+
+  console.log("Registering seller with password:", password);
   const hashedPassword = await bcrypt.hash(password, 10);
+  console.log("Hashed password:", hashedPassword);
   const seller = new Seller({
     name,
     email,
@@ -30,14 +34,25 @@ router.post("/seller/register", async (req, res) => {
 
 // Login seller
 router.post("/seller/login", async (req, res) => {
+  console.log(req.body);
   const { email, password } = req.body;
   const seller = await Seller.findOne({ email });
+  console.log("Seller found:", seller);
   if (!seller) return res.status(400).send("Invalid email or password");
+
+  // Debugging: Log the stored password hash
+  console.log("Stored hash:", seller.password);
+
   const isMatch = await bcrypt.compare(password, seller.password);
+  console.log("Password match:", isMatch);
   if (!isMatch) return res.status(400).send("Invalid email or password");
-  const token = jwt.sign({ id: seller._id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
-  });
+  const token = jwt.sign(
+    { id: seller._id, role: "seller" },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "1h",
+    }
+  );
   res.send({ token, sellerId: seller._id });
 });
 
