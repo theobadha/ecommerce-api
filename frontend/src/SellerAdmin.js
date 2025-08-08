@@ -7,32 +7,36 @@ function SellerAdmin() {
     name: "",
     email: "",
     phone: "",
-    address: ""
+    address: "",
+    password: "",
   });
 
   const navigate = useNavigate();
 
   useEffect(() => {
     fetch("/api/sellers")
-      .then(res => res.json())
-      .then(data => setSellers(data));
+      .then((res) => res.json())
+      .then((data) => setSellers(data))
+      .catch((error) => {
+        console.error("Failed to fetch sellers:", error);
+      });
   }, []);
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch("/api/sellers", {
+    const res = await fetch("/api/auth/seller/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form)
+      body: JSON.stringify(form),
     });
     if (res.ok) {
       const newSeller = await res.json();
       setSellers([...sellers, newSeller]);
-      setForm({ name: "", email: "", phone: "", address: "" });
+      setForm({ name: "", email: "", phone: "", address: "", password: "" });
     }
   };
 
@@ -71,15 +75,22 @@ function SellerAdmin() {
           onChange={handleChange}
           required
         />
+        <input
+          name="password"
+          placeholder="password"
+          value={form.password}
+          onChange={handleChange}
+          required
+        />
         <button type="submit">Add Seller</button>
       </form>
 
       <h2>All Sellers</h2>
       <ul>
-        {sellers.map(seller => (
+        {sellers.map((seller) => (
           <li key={seller._id}>
             <button onClick={() => handleSellerClick(seller._id)}>
-            {seller.name} - {seller.email} - {seller.phone} - {seller.address}
+              {seller.name} - {seller.email} - {seller.phone} - {seller.address}
             </button>
           </li>
         ))}
