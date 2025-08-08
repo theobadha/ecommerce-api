@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-function SellerAdmin() {
-  const [sellers, setSellers] = useState([]);
+function BuyerAdmin() {
+  const [buyers, setBuyers] = useState([]);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -14,11 +14,11 @@ function SellerAdmin() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("/api/sellers")
+    fetch("/api/buyers")
       .then((res) => res.json())
-      .then((data) => setSellers(data))
+      .then((data) => setBuyers(data))
       .catch((error) => {
-        console.error("Failed to fetch sellers:", error);
+        console.error("Failed to fetch buyers:", error);
       });
   }, []);
 
@@ -28,24 +28,24 @@ function SellerAdmin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch("/api/auth/seller/register", {
+    const res = await fetch("/api/auth/buyer/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     });
     if (res.ok) {
-      const newSeller = await res.json();
-      setSellers([...sellers, newSeller]);
+      const newBuyer = await res.json();
+      setBuyers([...buyers, newBuyer]);
       setForm({ name: "", email: "", phone: "", address: "", password: "" });
     }
   };
 
-  const handleSellerClick = (sellerId) => {
-    navigate(`/seller/${sellerId}`);
+  const handleBuyerClick = (buyerId) => {
+    navigate(`/buyer/${buyerId}`);
   };
   return (
     <div>
-      <h2>Add Seller</h2>
+      <h2>Add Buyer</h2>
       <form onSubmit={handleSubmit}>
         <input
           name="name"
@@ -82,15 +82,15 @@ function SellerAdmin() {
           onChange={handleChange}
           required
         />
-        <button type="submit">Add Seller</button>
+        <button type="submit">Add Buyer</button>
       </form>
 
-      <h2>All Sellers</h2>
+      <h2>All Buyers</h2>
       <ul>
-        {sellers.map((seller) => (
-          <li key={seller._id}>
-            <button onClick={() => handleSellerClick(seller._id)}>
-              {seller.name} - {seller.email} - {seller.phone} - {seller.address}
+        {buyers.map((buyer) => (
+          <li key={buyer._id}>
+            <button onClick={() => handleBuyerClick(buyer._id)}>
+              {buyer.name} - {buyer.email} - {buyer.phone} - {buyer.address}
             </button>
           </li>
         ))}
@@ -99,4 +99,4 @@ function SellerAdmin() {
   );
 }
 
-export default SellerAdmin;
+export default BuyerAdmin;
