@@ -8,10 +8,10 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/admin" element={<SellerAdmin />} />
+        <Route path="/admin" element={<SellerAdmin />} />{" "}
+        <Route path="/login/seller" element={<LoginForm userType="seller" />} />
         <Route path="/seller/:sellerId" element={<SellerHomepage />} />
         <Route path="/inventory" element={<Inventory />} />
-        <Route path="/login/seller" element={<LoginForm userType="seller" />} />
         <Route path="/login/buyer" element={<LoginForm userType="buyer" />} />
       </Routes>
     </Router>
