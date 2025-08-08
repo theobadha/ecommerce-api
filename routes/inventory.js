@@ -6,7 +6,9 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   const { sellerId } = req.query;
-  let filter = {};
+
+  //return items with quantity more than 0
+  let filter = { quantity: { $gt: 0 } };
   if (sellerId) {
     //only use sellerId if it's a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(sellerId)) {
