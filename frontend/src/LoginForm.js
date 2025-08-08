@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 
 // LoginForm component for both seller and buyer login
 function LoginForm({ userType }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   //handle form submission
   const handleSubmit = async (e) => {
@@ -20,7 +21,15 @@ function LoginForm({ userType }) {
       if (!res.ok) throw new Error("Invalid email or password");
       const data = await res.json();
       // Handle successful login (e.g., store token, redirect)
-      console.log("Login successful:", data);
+      localStorage.setItem("token", data.token);
+      console.log(`logged in successfully!`);
+      if (userType === "seller") {
+        navigate(`/seller/${data.sellerId}`); // data.sellerId should be the real ObjectId
+      } else if (userType === "buyer") {
+        navigate(`/buyer/${data.buyerId}`); // data.buyerId should be the real ObjectId
+      } else {
+        throw new Error("Unknown user type");
+      }
     } catch (err) {
       setError(err.message);
     }

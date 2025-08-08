@@ -1,12 +1,17 @@
 const { Seller } = require("../models/seller");
 const { Inventory } = require("../models/inventory");
 const express = require("express");
+const mongoose = require("mongoose");
 const router = express.Router();
 
 router.get("/", async (req, res) => {
   const { sellerId } = req.query;
   let filter = {};
   if (sellerId) {
+    //only use sellerId if it's a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(sellerId)) {
+      return res.status(400).send("Invalid seller ID");
+    }
     filter.seller = sellerId;
   }
   const inventory = await Inventory.find(filter).populate("seller", "name");
