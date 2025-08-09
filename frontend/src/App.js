@@ -6,6 +6,7 @@ import BuyerAdmin from "./BuyerAdmin";
 import BuyerHomepage from "./BuyerHomepage";
 import Inventory from "./Inventory";
 import LoginForm from "./LoginForm";
+import Checkout from "./Checkout";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/login/buyer" element={<LoginForm userType="buyer" />} />
         <Route path="/buyer/:buyerId" element={<BuyerHomepage />} />
+        <Route path="/checkout" element={<Checkout />} />
       </Routes>
     </Router>
   );
