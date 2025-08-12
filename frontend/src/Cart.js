@@ -20,6 +20,7 @@ function Cart({ cart }) {
         ))}
       </ul>
       <button onClick={() => navigate("/")}>Continue Shopping</button>
+      <button onClick={() => navigate("/checkout")}>Checkout</button>
     </div>
   );
 }
