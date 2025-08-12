@@ -6,6 +6,14 @@ import BuyerAdmin from "./BuyerAdmin";
 import BuyerHomepage from "./BuyerHomepage";
 import Inventory from "./Inventory";
 import LoginForm from "./LoginForm";
+import Cart from "./Cart";
+import { useLocation } from "react-router-dom";
+
+function CartWrapper() {
+  const location = useLocation();
+  const { cart } = location.state || { cart: [] };
+  return <Cart cart={cart} />;
+}
 
 function App() {
   return (
@@ -20,6 +28,7 @@ function App() {
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/login/buyer" element={<LoginForm userType="buyer" />} />
         <Route path="/buyer/:buyerId" element={<BuyerHomepage />} />
+        <Route path="/cart" element={<CartWrapper />} />
       </Routes>
     </Router>
   );
