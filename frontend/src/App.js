@@ -15,12 +15,6 @@ function CartWrapper() {
   const { cart } = location.state || { cart: [] };
   return <Cart cart={cart} />;
 }
-
-function CartWrapper() {
-  const location = useLocation();
-  const { cart } = location.state || { cart: [] };
-  return <Cart cart={cart} />;
-}
 function App() {
   return (
     <Router>
