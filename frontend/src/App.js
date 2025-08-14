@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Header from "./Header";
 import Registration from "./Registration";
 import SellerAdmin from "./SellerAdmin";
 import SellerHomepage from "./SellerHomepage";
@@ -19,6 +20,7 @@ function CartWrapper() {
 function App() {
   return (
     <Router>
+      <Header />
       <Routes>
         <Route path="/register" element={<Registration />} />
         <Route path="/register/buyer" element={<BuyerAdmin />} />
