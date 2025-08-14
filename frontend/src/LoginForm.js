@@ -26,6 +26,7 @@ function LoginForm({ userType }) {
       if (userType === "seller") {
         navigate(`/seller/${data.sellerId}`); // data.sellerId should be the real ObjectId
       } else if (userType === "buyer") {
+        localStorage.setItem("buyerId", data.buyerId);
         navigate(`/buyer/${data.buyerId}`); // data.buyerId should be the real ObjectId
       } else {
         throw new Error("Unknown user type");

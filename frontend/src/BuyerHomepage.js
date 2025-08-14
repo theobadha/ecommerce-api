@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function BuyerHomepage() {
   const [inventory, setInventory] = useState([]);
   const [cart, setCart] = useState([]);
   const navigate = useNavigate();
+  const { buyerId } = useParams();
 
   useEffect(() => {
     // Fetch all inventory items with quantity > 0
@@ -33,7 +34,7 @@ function BuyerHomepage() {
 
   //navigate to cart page, passing cart as state
   const goToCart = () => {
-    navigate("/cart", { state: { cart } });
+    navigate("/cart", { state: { cart, buyerId } });
   };
 
   return (
