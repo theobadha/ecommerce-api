@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { authenticatedGet } from "./utils/api";
 
 function Orders() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { cart, buyerId } = location.state || { cart: [], buyerId: null };
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch all orders for the buyer
+    // Fetch all orders for the buyer using authenticated API
     const fetchOrders = async () => {
       if (!buyerId) {
         setError("Buyer ID not found. Please log in again.");
@@ -19,23 +21,27 @@ function Orders() {
 
       try {
         setLoading(true);
-        const response = await fetch(`/api/orders/buyer/${buyerId}`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
+        setError(null);
+        
+        // Use the authenticated API utility function
+        const data = await authenticatedGet(`/api/orders/buyer/${buyerId}`);
         console.log("Fetched orders:", data);
         setOrders(data);
       } catch (error) {
         console.error("Error fetching orders:", error);
         setError("Failed to fetch orders: " + error.message);
+        
+        // Handle authentication errors
+        if (error.message.includes("Authentication failed") || error.message.includes("token not found")) {
+          navigate("/login/buyer");
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchOrders();
-  }, [buyerId]);
+  }, [buyerId, navigate]);
 
   if (loading) {
     return <div>Loading orders...</div>;

@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { authenticatedPost } from "./utils/api";
 
 // Checkout page for buyers to enter mobile number and complete payment
 function Checkout() {
   const [phone, setPhone] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const cart = location.state?.cart || [];
@@ -18,19 +21,21 @@ function Checkout() {
     e.preventDefault();
     
     if (!buyerId) {
-      alert("Buyer ID not found. Please log in again.");
+      setError("Buyer ID not found. Please log in again.");
       return;
     }
 
     if (cart.length === 0) {
-      alert("Cart is empty. Please add items to cart first.");
+      setError("Cart is empty. Please add items to cart first.");
       return;
     }
 
     // Simulate successful payment and redirect to orders page
+    setLoading(true);
+    setError(null);
 
-    //Persist each cart item as an order in the database
     try {
+      // Persist each cart item as an order in the database using authenticated API
       for (const item of cart) {
         const orderData = {
           buyerId,
@@ -40,19 +45,8 @@ function Checkout() {
         };
         console.log("Creating order with data:", orderData);
         
-        const response = await fetch("/api/orders", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(orderData),
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Failed to create order: ${response.statusText}`);
-        }
-        
-        const result = await response.json();
+        // Use the authenticated API utility function
+        const result = await authenticatedPost("/api/orders", orderData);
         console.log("Order created:", result);
       }
 
@@ -60,13 +54,28 @@ function Checkout() {
       navigate("/orders", { state: { cart, buyerId } });
     } catch (error) {
       console.error("Error creating orders:", error);
-      alert("Failed to create orders: " + error.message);
+      setError("Failed to create orders: " + error.message);
+      
+      // Handle authentication errors
+      if (error.message.includes("Authentication failed") || error.message.includes("token not found")) {
+        navigate("/login/buyer");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div>
       <h2>Checkout</h2>
+      
+      {/* Show error messages */}
+      {error && (
+        <div style={{ color: "red", padding: "10px", border: "1px solid red", margin: "10px 0" }}>
+          Error: {error}
+        </div>
+      )}
+      
       <form onSubmit={handleSubmit}>
         <p>
           Please enter your mobile phone number to complete the payment. You
@@ -80,10 +89,13 @@ function Checkout() {
             onChange={(e) => setPhone(e.target.value)}
             required
             placeholder="Enter your mobile number"
+            disabled={loading} // Disable input while processing
           />
         </label>
         <br />
-        <button type="submit">Complete Payment</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Processing..." : "Complete Payment"}
+        </button>
       </form>
     </div>
   );
