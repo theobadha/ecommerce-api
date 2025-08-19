@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { authenticatedGet } from "./utils/api";
+import { useAuth } from "./contexts/AuthContext";
 
 function Orders() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { cart, buyerId } = location.state || { cart: [], buyerId: null };
+  const { user } = useAuth();
+  const { cart, buyerId: buyerIdFromState } = location.state || { cart: [], buyerId: null };
+  // Derive buyerId from multiple sources to support direct navigation
+  const buyerId = buyerIdFromState || user?.id || localStorage.getItem("buyerId");
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
