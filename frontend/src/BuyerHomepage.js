@@ -8,6 +8,7 @@ function BuyerHomepage() {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [itemQuantities, setItemQuantities] = useState({});
   const navigate = useNavigate();
   const { buyerId } = useParams();
   const { logout } = useAuth(); // Use authentication context
@@ -22,6 +23,13 @@ function BuyerHomepage() {
         // Use the authenticated API utility function
         const data = await authenticatedGet("/api/inventory");
         setInventory(data);
+        
+        // Initialize quantities for all items
+        const initialQuantities = {};
+        data.forEach(item => {
+          initialQuantities[item._id] = 1;
+        });
+        setItemQuantities(initialQuantities);
       } catch (error) {
         console.error("Error fetching inventory:", error);
         setError(error.message);
@@ -39,7 +47,21 @@ function BuyerHomepage() {
     fetchInventory();
   }, [navigate]);
 
+  const handleQuantityChange = (itemId, value) => {
+    const numValue = parseInt(value) || 0;
+    setItemQuantities(prev => ({
+      ...prev,
+      [itemId]: Math.max(0, numValue)
+    }));
+  };
+
   const handleAddToCart = (item) => {
+    const quantity = itemQuantities[item._id] || 0;
+    
+    if (quantity <= 0) {
+      return; // Don't add if quantity is 0 or less
+    }
+
     // Check if item is already in the cart
     const itemInCart = cart.find((cartItem) => cartItem._id === item._id);
     if (itemInCart) {
@@ -47,14 +69,20 @@ function BuyerHomepage() {
       setCart(
         cart.map((cartItem) =>
           cartItem._id === item._id
-            ? { ...cartItem, quantity: cartItem.quantity + 1 }
+            ? { ...cartItem, quantity: cartItem.quantity + quantity }
             : cartItem
         )
       );
     } else {
-      // If item is not in the cart, add it
-      setCart([...cart, { ...item, quantity: 1 }]);
+      // If item is not in the cart, add it with the specified quantity
+      setCart([...cart, { ...item, quantity: quantity }]);
     }
+    
+    // Reset quantity input to 1 after adding to cart
+    setItemQuantities(prev => ({
+      ...prev,
+      [item._id]: 1
+    }));
   };
 
   //navigate to cart page, passing cart as state
@@ -105,16 +133,46 @@ function BuyerHomepage() {
       {!loading && !error && (
         <ul>
           {inventory.map((item) => (
-            <li key={item._id}>
-              {item.itemName} - {item.itemDescription} - Qty: {item.quantity} -{" "}
-              {item.category} - {item.condition} - ${item.price} - Seller:{" "}
-              {item.seller?.name}
-              <button
-                style={{ marginLeft: "10px" }}
-                onClick={() => handleAddToCart(item)}
-              >
-                Add to Cart
-              </button>
+            <li key={item._id} style={{ marginBottom: "15px", padding: "10px", border: "1px solid #ddd", borderRadius: "5px" }}>
+              <div style={{ marginBottom: "10px" }}>
+                <strong>{item.itemName}</strong> - {item.itemDescription}
+              </div>
+              <div style={{ marginBottom: "10px" }}>
+                Qty Available: {item.quantity} - Category: {item.condition} - ${item.price} - Seller: {item.seller?.name}
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <label>
+                  Quantity:
+                  <input
+                    type="number"
+                    min="1"
+                    max={item.quantity}
+                    value={itemQuantities[item._id] || 1}
+                    onChange={(e) => handleQuantityChange(item._id, e.target.value)}
+                    style={{ 
+                      marginLeft: "5px", 
+                      padding: "5px", 
+                      width: "60px",
+                      border: "1px solid #ccc",
+                      borderRadius: "3px"
+                    }}
+                  />
+                </label>
+                <button
+                  style={{ 
+                    padding: "8px 16px",
+                    backgroundColor: (itemQuantities[item._id] || 0) > 0 ? "#007bff" : "#6c757d",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: (itemQuantities[item._id] || 0) > 0 ? "pointer" : "not-allowed"
+                  }}
+                  onClick={() => handleAddToCart(item)}
+                  disabled={(itemQuantities[item._id] || 0) <= 0}
+                >
+                  Add to Cart
+                </button>
+              </div>
             </li>
           ))}
         </ul>
